@@ -26,17 +26,31 @@ const char* PARAM_INPUT_2 = "pass";
 const char* PARAM_INPUT_3 = "ip";
 const char* PARAM_INPUT_4 = "gateway";
 
+const char* PARAM_INPUT_5 = "revellie";
+const char* PARAM_INPUT_6 = "retreat";
+const char* PARAM_INPUT_7 = "taps";
+const char* PARAM_INPUT_8 = "tattoo";
+
 //Variables to save values from HTML form
 String ssid;
 String pass;
 String ip;
 String gateway;
+String revellie;
+String retreat;
+String taps;
+String tattoo;
 
 // File paths to save input values permanently
 const char* ssidPath = "/ssid.txt";
 const char* passPath = "/pass.txt";
 const char* ipPath = "/ip.txt";
 const char* gatewayPath = "/gateway.txt";
+const char* revelliePath = "/revellie.txt";
+const char* retreatPath = "/retreat.txt";
+const char* tapsPath = "/taps.txt";
+const char* tattooPath = "/tattoo.txt";
+
 
 const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = -18000;
@@ -195,13 +209,23 @@ void setup() {
   pass = readFile(LittleFS, passPath);
   ip = readFile(LittleFS, ipPath);
   gateway = readFile (LittleFS, gatewayPath);
+  // Load values saved in LittleFS
+  revellie = readFile(LittleFS, revelliePath);
+  retreat = readFile(LittleFS, retreatPath);
+  taps = readFile(LittleFS, tapsPath);
+  tattoo = readFile (LittleFS, tattooPath);
   Serial.println(ssid);
   Serial.println(pass);
   Serial.println(ip);
   Serial.println(gateway);
+  Serial.println(revellie);
+  Serial.println(retreat);
+  Serial.println(taps);
+  Serial.println(tattoo);
 
   if(initWiFi()) {
 
+    
     // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
       request->send(LittleFS, "/index.html", "text/html", false, processor);
@@ -220,6 +244,51 @@ void setup() {
       request->send(LittleFS, "/index.html", "text/html", false, processor);
     });
 
+    server.on("/times", HTTP_POST, [](AsyncWebServerRequest *request) {
+      int params = request->params();
+      for(int i=0;i<params;i++){
+        const AsyncWebParameter* p = request->getParam(i);
+        if(p->isPost()){
+          // HTTP POST ssid value
+          if (p->name() == PARAM_INPUT_5) {
+            revellie = p->value().c_str();
+            Serial.print("revellie set to: ");
+            Serial.println(revellie);
+            // Write file to save value
+            writeFile(LittleFS, revelliePath, revellie.c_str());
+          }
+          // HTTP POST pass value
+          if (p->name() == PARAM_INPUT_6) {
+            retreat = p->value().c_str();
+            Serial.print("retreat set to: ");
+            Serial.println(retreat);
+            // Write file to save value
+            writeFile(LittleFS, retreatPath, retreat.c_str());
+          }
+          // HTTP POST ip value
+          if (p->name() == PARAM_INPUT_7) {
+            taps = p->value().c_str();
+            Serial.print("taps is set to: ");
+            Serial.println(taps);
+            // Write file to save value
+            writeFile(LittleFS, tapsPath, taps.c_str());
+          }
+          // HTTP POST gateway value
+          if (p->name() == PARAM_INPUT_8) {
+            tattoo = p->value().c_str();
+            Serial.print("tattoo set to: ");
+            Serial.println(tattoo);
+            // Write file to save value
+            writeFile(LittleFS, tattooPath, tattoo.c_str());
+          }
+          //Serial.printf("POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
+        }
+      }
+      request->send(200, "text/plain", "Done. ESP will restart, connect to your router and go to IP address: " + ip);
+      delay(3000);
+      ESP.restart();
+    });
+
     Serial.println();
     Serial.println(F("\nESP32-S3 DFRobot DFPlayer Mini Demo"));
     Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
@@ -233,6 +302,7 @@ void setup() {
     Serial.println(("DFPlayer Mini online."));
     myDFPlayer.volume(10);  //Set volume value. From 0 to 30
     myDFPlayer.play(1);     //Play the first mp3
+    server.begin();
 
   }
   else {
@@ -334,19 +404,22 @@ void loop() {
   lcd.print(&timeinfo, "%m-%d-%Y");
   delay(1000);
   lcd.clear(); 
-  int hour = timeinfo.tm_hour;
-  int minute = timeinfo.tm_min;
+  String hour = String(timeinfo.tm_hour);
+  String minute = String(timeinfo.tm_min);
   int second = timeinfo.tm_sec;
-  Serial.println(hour);
-  Serial.println(minute);
-  Serial.println(second);
-  if(hour == 6 && minute == 30 && second == 0){
+
+  String currentTime = hour + ":" + minute;
+  Serial.println(currentTime);
+  if(currentTime == revellie && second == 0){
     myDFPlayer.play(2);
   }
-  if(hour == 17 && minute == 00 && second == 0){
+  if(currentTime == retreat && second == 0){
     myDFPlayer.play(3);
   }
-  if(hour == 21 && minute == 30 && second == 0){
+  if(currentTime == taps && second == 0){
     myDFPlayer.play(4);
+  }
+  if(currentTime == tattoo && second == 0){
+    myDFPlayer.play(5);
   }
 }

@@ -11,17 +11,27 @@
     <div class="topnav">
       <h1>ESP WEB SERVER</h1>
     </div>
+	<div>
+		<h2>Use the clock buttons to set times for bugels<h2>
+	<div>
     <div class="content">
-      <div class="card-grid">
-        <div class="card">
-          <p class="card-title"><i class="fas fa-lightbulb"></i> GPIO 2</p>
+    <div class="card-grid">
+      <div class="card">
+        <form action="/times" method="POST">
           <p>
-            <a href="on"><button class="button-on">ON</button></a>
-            <a href="off"><button class="button-off">OFF</button></a>
+            <label for="revellie">Revellie</label>
+            <input type="time" id ="revellie" name="revellie"><br>
+            <label for="retreat">Retreat</label>
+            <input type="time" id ="retreat" name="retreat"><br>
+            <label for="taps">TAPS</label>
+            <input type="time" id ="taps" name="taps" ><br>
+            <label for="tattoo">Tattoo</label>
+            <input type="time" id ="tattoo" name="tattoo"><br><br>
+            <input type ="submit" value ="Submit">
           </p>
-          <p class="state">State: %STATE%</p>
-        </div>
+        </form>
       </div>
     </div>
+  </div>
   </body>
 </html>
