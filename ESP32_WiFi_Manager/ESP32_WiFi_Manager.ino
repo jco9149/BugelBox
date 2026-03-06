@@ -409,7 +409,6 @@ void loop() {
   int second = timeinfo.tm_sec;
 
   String currentTime = hour + ":" + minute;
-  Serial.println(currentTime);
   if(currentTime == revellie && second == 0){
     myDFPlayer.play(2);
   }
