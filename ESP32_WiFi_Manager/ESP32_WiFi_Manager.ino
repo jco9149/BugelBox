@@ -300,7 +300,7 @@ void setup() {
       while (true);
     }
     Serial.println(("DFPlayer Mini online."));
-    myDFPlayer.volume(10);  //Set volume value. From 0 to 30
+    myDFPlayer.volume(30);  //Set volume value. From 0 to 30
     myDFPlayer.play(1);     //Play the first mp3
     server.begin();
 
@@ -409,16 +409,17 @@ void loop() {
   int second = timeinfo.tm_sec;
 
   String currentTime = hour + ":" + minute;
-  if(currentTime == revellie && second == 0){
+  if(!currentTime.compareTo(revellie) && second == 0){
     myDFPlayer.play(2);
   }
-  if(currentTime == retreat && second == 0){
+  if(!currentTime.compareTo(retreat) && second == 0){
     myDFPlayer.play(3);
   }
-  if(currentTime == taps && second == 0){
+  if(!currentTime.compareTo(taps) && second == 0){
     myDFPlayer.play(4);
   }
-  if(currentTime == tattoo && second == 0){
+  if(!currentTime.compareTo(tattoo) && second == 0){
+    
     myDFPlayer.play(5);
   }
 }
