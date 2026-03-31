@@ -12,26 +12,107 @@
       <h1>ESP WEB SERVER</h1>
     </div>
 	<div>
-		<h2>Use the clock buttons to set times for bugels<h2>
+		<h2>Use the clock buttons to set times for bugle calls<h2>
 	<div>
     <div class="content">
     <div class="card-grid">
       <div class="card">
         <form action="/times" method="POST">
           <p>
-            <label for="revellie">Revellie</label>
+            <label for="revellie">Reveille</label>
             <input type="time" id ="revellie" name="revellie"><br>
-            <label for="retreat">Retreat</label>
+			<label for="anthem">National Anthem</label>
+            <input type="time" id ="anthem" name="antem"><br>
+            <label for="retreat">Retreat/To the colors</label>
             <input type="time" id ="retreat" name="retreat"><br>
+			<label for="tattoo">Tattoo</label>
+            <input type="time" id ="tattoo" name="tattoo"><br>
             <label for="taps">TAPS</label>
             <input type="time" id ="taps" name="taps" ><br>
-            <label for="tattoo">Tattoo</label>
-            <input type="time" id ="tattoo" name="tattoo"><br><br>
+			<select multiple  id="day" name="day">
+				<option value="">--Choose a day--</option>
+				<option value="monday">Monday</option>
+				<option value="tuesday">Tuesday</option>
+				<option value="wednesday">Wednesday</option>
+				<option value="thursday">Thursday</option>
+				<option value="friday">Friday</option>
+				<option value="saturday">Saturday</option>
+				<option value="sunday">Sunday</option>
+			</select>
             <input type ="submit" value ="Submit">
           </p>
         </form>
       </div>
     </div>
   </div>
+  <script>	
+	window.onload = function() {
+		getRevellie();
+		getRetreat();
+		getTaps();
+		getTattoo();
+		getAnthem();
+	}
+	function getRevellie(){
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if(this.readyState == 4 && this.status == 200){
+				document.getElementById("revellie").value = this.responseText;
+			}
+		}
+		xhttp.open("GET", "getRevellie", true);
+		xhttp.send();
+	}
+	function getRetreat(){
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if(this.readyState == 4 && this.status == 200){
+				document.getElementById("retreat").value = this.responseText;
+			}
+		}
+		xhttp.open("GET", "getRetreat", true);
+		xhttp.send();
+	}
+	function getTaps(){
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if(this.readyState == 4 && this.status == 200){
+				document.getElementById("taps").value = this.responseText;
+			}
+		}
+		xhttp.open("GET", "getTaps", true);
+		xhttp.send();
+	}
+	function getTattoo(){
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if(this.readyState == 4 && this.status == 200){
+				document.getElementById("tattoo").value = this.responseText;
+			}
+		}
+		xhttp.open("GET", "getTattoo", true);
+		xhttp.send();
+	}
+	function getRevellie(){
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if(this.readyState == 4 && this.status == 200){
+				document.getElementById("revellie").value = this.responseText;
+			}
+		}
+		xhttp.open("GET", "getRevellie", true);
+		xhttp.send();
+	}
+	function getAnthem(){
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if(this.readyState == 4 && this.status == 200){
+				document.getElementById("anthem").value = this.responseText;
+			}
+		}
+		xhttp.open("GET", "getAnthem", true);
+		xhttp.send();
+	}
+  </script>
   </body>
 </html>
