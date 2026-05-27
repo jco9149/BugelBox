@@ -27,6 +27,12 @@ const char* PARAM_INPUT_6 = "retreat";
 const char* PARAM_INPUT_7 = "taps";
 const char* PARAM_INPUT_8 = "tattoo";
 const char* PARAM_INPUT_9 = "anthem";
+const char* PARAM_INPUT_4 = "bugledays";
+const char* PARAM_INPUT_10 = "revellieToggle";
+const char* PARAM_INPUT_11 = "anthemToggle";
+const char* PARAM_INPUT_12 = "retreatToggle";
+const char* PARAM_INPUT_13 = "tattooToggle";
+const char* PARAM_INPUT_14 = "tapsToggle";
 
 //Variables to save values from HTML form
 String revellie;
@@ -34,6 +40,12 @@ String anthem;
 String retreat;
 String taps;
 String tattoo;
+String days;
+String revTog;
+String anthemTog;
+String retreatTog;
+String tapsTog;
+String tattooTog;
 
 bool initLoad = true;
 
@@ -43,6 +55,12 @@ const char* anthemPath = "/anthem.txt";
 const char* retreatPath = "/retreat.txt";
 const char* tapsPath = "/taps.txt";
 const char* tattooPath = "/tattoo.txt";
+const char* bugleDays = "/bugledays.txt";
+const char* revTogPath = "/revTogPath.txt";
+const char* anthemTogPath = "/anthemTogPath.txt";
+const char* retTogPath = "/retreatTogPath.txt";
+const char* tapsTogPath = "/tapsTogPath.txt";
+const char* tattooTogPath = "/tattooTogPath.txt";
 
 
 const char* ntpServer = "pool.ntp.org";
@@ -107,7 +125,6 @@ void configModeCallback () {
   ESP.restart();
 }
 
-
 void setup() {
       // Serial port for debugging purposes
   WiFi.mode(WIFI_STA);
@@ -129,11 +146,19 @@ void setup() {
   retreat = readFile(LittleFS, retreatPath);
   taps = readFile(LittleFS, tapsPath);
   tattoo = readFile (LittleFS, tattooPath);
+  days = readFile (LittleFS, bugleDays);
+  revTog = readFile (LittleFS, revTogPath);
+  anthemTog = readFile (LittleFS, anthemTogPath);
+  retreatTog = readFile (LittleFS, retTogPath);
+  tapsTog = readFile (LittleFS, tapsTogPath);
+  tattooTog = readFile(LittleFS, tattooTogPath);
+
   Serial.println(revellie);
   Serial.println(anthem);
   Serial.println(retreat);
   Serial.println(taps);
   Serial.println(tattoo);
+  Serial.println(days);
   
   // Optional, but often required for hostname to stick
 
@@ -143,11 +168,12 @@ void setup() {
   wm.setSaveConfigCallback(configModeCallback);
     // reset settings - wipe stored credentials for testing
     // these are stored by the esp library
+
   bool res;
   wm.setHostname("bugle"); 
     // res = wm.autoConnect(); // auto generated AP name from chipid
     // res = wm.autoConnect("AutoConnectAP"); // anonymous ap
-  res = wm.autoConnect("AutoConnectAP","password"); // password protected ap
+  res = wm.autoConnect("Bugle Portal","password"); // password protected ap
 
 
   if(!res) {
@@ -173,14 +199,34 @@ void setup() {
     }
     
     if(tattoo == ""){
-      writeFile(LittleFS, tattooPath, "22:00");
+      writeFile(LittleFS, tattooPath, "20:45");
     }
 
     if(anthem == ""){
       writeFile(LittleFS, anthemPath, "12:00");
 
     }
-    
+
+    if(days == ""){
+      writeFile(LittleFS, bugleDays, "0123456");
+    }
+
+    if(revTog == ""){
+      writeFile(LittleFS, revTogPath, "on");
+    }
+    if(anthemTog == ""){
+      writeFile(LittleFS, anthemTogPath, "on");
+    }
+    if(retreatTog == ""){
+      writeFile(LittleFS, retTogPath, "on");
+    }
+    if(tapsTog == ""){
+      writeFile(LittleFS, tapsTogPath, "on");
+    }
+    if(tattooTog == ""){
+      writeFile(LittleFS, tattooTogPath, "on");
+    }
+
     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
         // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -205,6 +251,39 @@ void setup() {
     server.on("/getAnthem", HTTP_GET, [](AsyncWebServerRequest *request) {
       request->send(200, "text/plain", anthem);
     });
+    server.on("/getDays", HTTP_GET, [](AsyncWebServerRequest *request) {
+      request->send(200, "text/plain", days);
+    });
+    server.on("/getRevTog", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(200, "text/plain", revTog);
+    });
+    server.on("/getAntTog", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(200, "text/plain", anthemTog);
+    });
+    server.on("/getRetTog", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(200, "text/plain", retreatTog);
+    });
+    server.on("/getTatTog", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(200, "text/plain", tattooTog);
+    });
+    server.on("/getTapTog", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(200, "text/plain", tapsTog);
+    });
+    server.on("/playRev", HTTP_GET, [](AsyncWebServerRequest *request){
+      myDFPlayer.play(2);
+    });
+    server.on("/playRet", HTTP_GET, [](AsyncWebServerRequest *request){
+      myDFPlayer.play(3);
+    });
+    server.on("/playTaps", HTTP_GET, [](AsyncWebServerRequest *request){
+      myDFPlayer.play(4);
+    });
+    server.on("/playTat", HTTP_GET, [](AsyncWebServerRequest *request){
+      myDFPlayer.play(5);
+    });
+    server.on("/playAnthem,", HTTP_GET, [](AsyncWebServerRequest *request){
+      myDFPlayer.play(6);
+    });
     server.serveStatic("/", LittleFS, "/");
 
     server.on("/times", HTTP_POST, [](AsyncWebServerRequest *request) {
@@ -212,6 +291,13 @@ void setup() {
       for(int i=0;i<params;i++){
         const AsyncWebParameter* p = request->getParam(i);
         if(p->isPost()){
+          if (p->name() == PARAM_INPUT_4) {
+            days = p->value().c_str();
+            Serial.print("days is set to: ");
+            Serial.println(days);
+            // Write file to save value
+            writeFile(LittleFS, bugleDays, days.c_str());
+          }
           // HTTP POST ssid value
           if (p->name() == PARAM_INPUT_5) {
             revellie = p->value().c_str();
@@ -251,11 +337,46 @@ void setup() {
             // Write file to save value
             writeFile(LittleFS, anthemPath, anthem.c_str());
           }
+          if (p->name() == PARAM_INPUT_10) {
+            revTog = p->value().c_str();
+            Serial.print("rev Tog Path set to: ");
+            Serial.println(revTog);
+            // Write file to save value
+            writeFile(LittleFS, revTogPath, revTog.c_str());
+          }
+          if (p->name() == PARAM_INPUT_11) {
+            anthemTog = p->value().c_str();
+            Serial.print("ant tog Path set to: ");
+            Serial.println(anthemTog);
+            // Write file to save value
+            writeFile(LittleFS, anthemTogPath, anthemTog.c_str());
+          }
+          if (p->name() == PARAM_INPUT_12) {
+            retreatTog = p->value().c_str();
+            Serial.print("ret tog Path set to: ");
+            Serial.println(retreatTog);
+            // Write file to save value
+            writeFile(LittleFS, retTogPath, retreatTog.c_str());
+          }
+          if (p->name() == PARAM_INPUT_13) {
+            tattooTog = p->value().c_str();
+            Serial.print("tat tog Path set to: ");
+            Serial.println(tattooTog);
+            // Write file to save value
+            writeFile(LittleFS, tattooTogPath, tattooTog.c_str());
+          }
+          if (p->name() == PARAM_INPUT_14) {
+            tapsTog = p->value().c_str();
+            Serial.print("taps tog Path set to: ");
+            Serial.println(tapsTog);
+            // Write file to save value
+            writeFile(LittleFS, tapsTogPath, tapsTog.c_str());
+          }
           //Serial.printf("POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
         }
       }
       delay(3000);
-      ESP.restart();
+      request->send(200, "text/html", "<h1>Success!</h1><p>Your dates and times were submited click the back button to reload the page.</p><a href=\"/\">Back</a>");
     });
     
     Serial.println();
@@ -275,10 +396,7 @@ void setup() {
       Serial.println("starting server");
       server.begin();
     }
-    
-    
   }
-  
 }
 
 void loop() {
@@ -291,8 +409,10 @@ void loop() {
   String hour = String(timeinfo.tm_hour);
   String minute = String(timeinfo.tm_min);
   int second = timeinfo.tm_sec;
+  String currentDay = String(timeinfo.tm_wday);
 
-  // Serial.println(String(timeinfo.tm_wday));
+  
+  
 
   if(second == 0 || initLoad){
   lcd.clear();
@@ -306,21 +426,23 @@ void loop() {
   lcd.print(&timeinfo, "%m-%d-%Y");
   initLoad = false;
 
+
+
   }
   String currentTime = hour + ":" + minute;
-  if(!currentTime.compareTo(revellie) && second == 0){
+  if(!currentTime.compareTo(revellie) && second == 0 && days.indexOf(currentDay) >= 0){
     myDFPlayer.play(2);
   }
-  if(!currentTime.compareTo(retreat) && second == 0){
+  if(!currentTime.compareTo(retreat) && second == 0 && days.indexOf(currentDay) >= 0){
     myDFPlayer.play(3);
   }
-  if(!currentTime.compareTo(anthem) && second == 0){
+  if(!currentTime.compareTo(anthem) && second == 0 && days.indexOf(currentDay) >= 0){
     myDFPlayer.play(6);
   }
-  if(!currentTime.compareTo(taps) && second == 0){
+  if(!currentTime.compareTo(taps) && second == 0 && days.indexOf(currentDay) >= 0){
     myDFPlayer.play(4);
   }
-  if(!currentTime.compareTo(tattoo) && second == 0){
+  if(!currentTime.compareTo(tattoo) && second == 0 && days.indexOf(currentDay) >= 0){
     
     myDFPlayer.play(5);
   }   
