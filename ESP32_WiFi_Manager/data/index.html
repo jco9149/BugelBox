@@ -22,7 +22,6 @@
       <div class="card">
 		<div class="grid-container">
         <form action="/times" method="POST">
-          <p>
             <i class="fas fa-play" onclick="playRev()"></i>
 			<label for="revellie">Reveille</label>
             <input type="time" id ="revellie" name="revellie" class="grid-item"> <input type="checkbox"  id="revellieToggle"><input type="hidden" name="revellieToggle" id="revTogHidden"><br>
@@ -32,7 +31,7 @@
 			<i class="fas fa-play" onclick="playRet()"></i>
 		    <label for="retreat">Retreat/To the colors</label>
             <input type="time" id ="retreat" name="retreat" class="grid-item"><input type="checkbox" id="retreatToggle"><input type="hidden" name="retreatToggle"  id="retTogHidden"><br>
-			<i class="fas fa-play" onclick="playTat()></i>
+			<i class="fas fa-play" onclick="playTat()"></i>
 			<label for="tattoo">Tattoo</label>
             <input type="time" id ="tattoo" name="tattoo" class="grid-item"><input type="checkbox" id="tattooToggle"><input type="hidden" name="tattooToggle" id="tatTogHidden"><br>
             <i class="fas fa-play" onclick="playTaps()"></i>
@@ -55,7 +54,6 @@
 		</div>
 			<input type="hidden" name="bugledays" id="bugledays">
             <input type="submit" onclick="setupSubmit()" value="Submit">
-          </p>
         </form>
 	  </div>
     </div>
@@ -240,7 +238,7 @@
 	
 	function playAnthem(){
 		var xhttp = new XMLHttpRequest();
-		xhttp.open("GET", "playAnthem", true);
+		xhttp.open("GET", "playAnt", true);
 		xhttp.send();
 	}
 	

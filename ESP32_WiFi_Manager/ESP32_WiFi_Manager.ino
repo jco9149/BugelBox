@@ -118,7 +118,7 @@ void writeFile(fs::FS &fs, const char * path, const char * message){
     Serial.println("- file written");
   } else {
     Serial.println("- write failed");
-  }
+  }a
 }
 
 void configModeCallback () {
@@ -281,7 +281,7 @@ void setup() {
     server.on("/playTat", HTTP_GET, [](AsyncWebServerRequest *request){
       myDFPlayer.play(5);
     });
-    server.on("/playAnthem,", HTTP_GET, [](AsyncWebServerRequest *request){
+    server.on("/playAnt", HTTP_GET, [](AsyncWebServerRequest *request){
       myDFPlayer.play(6);
     });
     server.serveStatic("/", LittleFS, "/");
