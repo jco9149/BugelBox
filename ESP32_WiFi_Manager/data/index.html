@@ -20,6 +20,7 @@
     <div class="content">
     <div class="card-grid">
       <div class="card">
+		<div style="display:flex;">
 		<div class="grid-container">
         <form action="/times" method="POST">
             <i class="fas fa-play" onclick="playRev()"></i>
@@ -38,19 +39,15 @@
 			<label for="taps">TAPS</label>
             <input type="time" id ="taps" name="taps" class="grid-item"><input type="checkbox" id="tapsToggle"><input type="hidden"  name="tapsToggle" id="tapTogHidden"><br>
 		</div>
-		<div class="dropdown">
-			<div class="dropdown-btn" id="bugleDays" onclick="toggleDropdown()">Select Days</div>
-				<div class="dropdown-content" id="dropdownList">
-				<label><input type="checkbox" id="monday" value="1">Monday</label>
-				<label><input type="checkbox" value="2" id="tuesday">Tuesday</label>
-				<label><input type="checkbox" value="3" id="wednesday"> Wednesday</label>
-				<label><input type="checkbox" value="4" id="thursday"> Thursday</label>
-				<label><input type="checkbox" value="5" id="friday"> Friday</label>
-				<label><input type="checkbox" value="6" id="saturday"> Saturday</label>
-				<label><input type="checkbox" value="0" id="sunday"> Sunday</label>
-
-			
-			</div>
+		<div class="grid-container" style="text-align: -webkit-left;">
+			<label><input type="checkbox" id="monday" value="1">Monday</label>
+			<label><input type="checkbox" value="2" id="tuesday">Tuesday</label>
+			<label><input type="checkbox" value="3" id="wednesday">Wednesday</label>
+			<label><input type="checkbox" value="4" id="thursday">Thursday</label>
+			<label><input type="checkbox" value="5" id="friday">Friday</label>
+			<label><input type="checkbox" value="6" id="saturday">Saturday</label>
+			<label><input type="checkbox" value="0" id="sunday">Sunday</label>
+		</div>
 		</div>
 			<input type="hidden" name="bugledays" id="bugledays">
             <input type="submit" onclick="setupSubmit()" value="Submit">

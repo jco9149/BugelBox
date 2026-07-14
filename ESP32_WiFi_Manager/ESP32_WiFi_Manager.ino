@@ -8,11 +8,13 @@
 #include "time.h"
 #include <ESPmDNS.h>
 
-#define RXD1 27
-#define TXD1 26
+#define RXD1 7
+#define TXD1 8
 
-#define mySoftwareSerial Serial1
 #define BUSY 4
+
+HardwareSerial mySerial(1);
+
 
 DFRobotDFPlayerMini myDFPlayer;
 
@@ -118,7 +120,7 @@ void writeFile(fs::FS &fs, const char * path, const char * message){
     Serial.println("- file written");
   } else {
     Serial.println("- write failed");
-  }a
+  }
 }
 
 void configModeCallback () {
@@ -130,7 +132,14 @@ void setup() {
   WiFi.mode(WIFI_STA);
   Serial.begin(115200);
   initLittleFS();
-  Serial1.begin(9600, SERIAL_8N1, RXD1, TXD1);
+  mySerial.begin(9600, SERIAL_8N1, RXD1, TXD1);
+
+  delay(8000);
+
+   if (!myDFPlayer.begin(mySerial)) {
+    Serial.println(F("Unable to begin:"));
+    while(true);
+  }
 
 
   pinMode(4, INPUT_PULLUP);       // GPIO 4 is Busy signal
@@ -383,14 +392,14 @@ void setup() {
     Serial.println(F("\nESP32-S3 DFRobot DFPlayer Mini Demo"));
     Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
 
-    if (!myDFPlayer.begin(mySoftwareSerial)) {  //Use softwareSerial to communicate with mp3.
-      Serial.println(F("Unable to begin:"));
-      Serial.println(F("1.Please recheck the connection!"));
-      Serial.println(F("2.Please insert the SD card!"));
-      while (true);
-    }
+    // if (!myDFPlayer.begin(mySoftwareSerial)) {  //Use softwareSerial to communicate with mp3.
+    //   Serial.println(F("Unable to begin:"));
+    //   Serial.println(F("1.Please recheck the connection!"));
+    //   Serial.println(F("2.Please insert the SD card!"));
+    //   while (true);
+    // }
     Serial.println(("DFPlayer Mini online."));
-    myDFPlayer.volume(30);  //Set volume value. From 0 to 30
+    myDFPlayer.volume(50);  //Set volume value. From 0 to 30
     myDFPlayer.play(1);     //Play the first mp3
     if (WiFi.status() == WL_CONNECTED) {
       Serial.println("starting server");
